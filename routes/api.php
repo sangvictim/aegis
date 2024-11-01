@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SalesOrderController;
+use App\Http\Middleware\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +15,7 @@ Route::group([
     'middleware' => ['throttle:60,1'],
     'prefix' => 'auth'
 ], function ($router) {
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api')->name('logout');
     Route::get('/me', [AuthController::class, 'me'])->middleware('auth:api')->name('me');
@@ -22,7 +23,7 @@ Route::group([
 
 
 Route::group([
-    'middleware' => ['auth:api', 'throttle:60,1'],
+    'middleware' => ['auth:api', 'throttle:60,1', 'role'],
     'prefix' => 'sales'
 ], function ($router) {
     Route::get('/list', [SalesOrderController::class, 'list']);
@@ -30,7 +31,7 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => ['auth:api', 'throttle:60,1'],
+    'middleware' => ['auth:api', 'throttle:60,1', 'role'],
     'prefix' => 'refund'
 ], function ($router) {
     Route::get('/list', [RefundController::class, 'list']);
